@@ -2,6 +2,8 @@
 Python Berechnungsskript für die Sendung Are You The One: \
 Berechnet auf Basis der bisherigen Informationen die noch möglichen Kombinationen der Paarungen.
 
+![Example](https://github.com/pheagan/AYTO-Berechnung/blob/main/AYTO_Berechnung/Img/VIP2022_Nacht_7.png?raw=true)
+
 Im Folgenden ein kurzes **How-To** für die eigene Nutzung
 
 ### Vorbereitung
