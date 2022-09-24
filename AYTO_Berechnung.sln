@@ -1,0 +1,23 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31129.286
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "AYTO_Berechnung", "AYTO_Berechnung\AYTO_Berechnung.pyproj", "{7356E2BB-47C6-4571-9CF1-C343ABB159C7}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7356E2BB-47C6-4571-9CF1-C343ABB159C7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7356E2BB-47C6-4571-9CF1-C343ABB159C7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {77EF28BB-A344-4400-AB3C-4AFDBAD359F5}
+	EndGlobalSection
+EndGlobal
