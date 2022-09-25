@@ -238,6 +238,7 @@ if combinations_left == 0:
 for row in range(0,len(matchMatrix)):
     for col in range(0,len(matchMatrix[0])):
         matchMatrix[row][col] = round(matchMatrix[row][col]*100/combinations_left,1)
+endtime = time.time()
 print('Elapsed Time: {:5.3f}s'.format(endtime-starttime), end='  ')
 print()
 
