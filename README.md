@@ -2,13 +2,13 @@
 Python Berechnungsskript für die Sendung Are You The One: \
 Berechnet auf Basis der bisherigen Informationen die noch möglichen Kombinationen der Paarungen.
 
-![Example](https://github.com/pheagan/AYTO-Berechnung/blob/main/AYTO_Berechnung/Img/VIP2022_Nacht_7.png?raw=true)
+![Example1](https://github.com/pheagan/AYTO-Berechnung/blob/main/AYTO_Berechnung/Img/VIP2022_Nacht_7.png?raw=true)
 
 Im Folgenden ein kurzes **How-To** für die eigene Nutzung
 
 ### Vorbereitung
 Skript erstellt mit Version 3.7.\
-Es werden die Module _**matplotlib**_, _**sys**_, _**math**_, _**time**_, und _**itertools**_ verwendet.
+Es werden die Module _**matplotlib**_, _**sys**_, _**math**_, _**time**_, _**itertools**_ und _**tkinter**_ verwendet.
 
 Neben der Skriptdatei müssen zusätzlich Textdateien mit den bekannten Informationen im gleichen Ordner liegen. 
 Folgende Textdateien müssen im selben Ordner wie das Skript liegen:
@@ -43,4 +43,17 @@ Folgende Textdateien müssen im selben Ordner wie das Skript liegen:
 ### Ausführen
 Das Skript entweder durch Doppelklick ausführen oder in Konsole das Skript mit Pyhton ausführen. 
 Das Skript sollte im Anschluss von alleine Durchlaufen und am Ende eine Übersichtstabelle erstellen.\
-Bisher ist kaum Fehlerüberprüfung bei der Input-Eingabe implementiert. Sollte das Skript ohne Fehlermeldung abbrechen, überprüfen ob alle notwendigen Python Module installiert sind und die Textdateien für die Eingabe der Daten auf Fehler überprüfen.
+Bisher ist kaum Fehlerüberprüfung bei der Input-Eingabe implementiert. Sollte das Skript ohne Fehlermeldung abbrechen, überprüfen ob alle notwendigen Python Module installiert sind und die Textdateien für die Eingabe der Daten auf Fehler überprüfen.\
+\
+Nach Initialer Berechnung fragt das Skript, ob eine interaktive Tabelle erstellt werden soll (bestätigen durch Input 'y') oder lediglich eine statische.
+Die statische Tabelle entspricht dem oben dargestellten Bild.
+Dieses kann beliebig exportiert werden.
+Eine weitere Anpassung ist nicht möglich. \
+Bei der dynamischen Tabelle können durch klicken manuell Matches auf noch offene Kombinationen gesetzt werden.
+Die restlichen Möglichkeiten werden daraufhin angepasst.\
+Manuell gesetzte Matches werden in hellerem Grün gehighlighted und können auch wieder abgewählt werden.
+Durch die Randbedingung (Matchboxen, MatchingNights) vorgegebene Matches können nicht abgewählt werden.
+Ein Bild-Export aus dieser interaktiven Tabelle ist nicht möglich. \
+\
+Beispielhafte Darstellung der interaktiven Tabelle zu oben abgebildeter Tabelle mit manuell gewähltem Match aus Franziska und Martin:
+![Example2](https://github.com/pheagan/AYTO-Berechnung/blob/main/AYTO_Berechnung/Img/Interaktive_Tabelle_Beispiel.png?raw=true)
