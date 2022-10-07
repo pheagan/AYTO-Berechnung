@@ -56,4 +56,5 @@ Durch die Randbedingung (Matchboxen, MatchingNights) vorgegebene Matches können
 Ein Bild-Export aus dieser interaktiven Tabelle ist nicht möglich. \
 \
 Beispielhafte Darstellung der interaktiven Tabelle zu oben abgebildeter Tabelle mit manuell gewähltem Match aus Franziska und Martin:
-![Example2](https://github.com/pheagan/AYTO-Berechnung/blob/main/AYTO_Berechnung/Img/Interaktive_Tabelle_Beispiel.png?raw=true)
+
+![Example](https://github.com/pheagan/AYTO-Berechnung/blob/main/AYTO_Berechnung/Img/Interaktive_Tabelle_Beispiel.PNG?raw=true)
