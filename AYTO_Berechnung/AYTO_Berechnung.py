@@ -16,59 +16,54 @@ def Header():
     print('Made by Alex/Pheagan \n')
 
 def TeilnehmerA():      # Kleinere Gruppe!
-    datei = open('GruppeA.txt', 'r')
-    text = datei.readlines()
-    datei.close()
+    with open('GruppeA.txt', 'r') as datei:
+        text = datei.read().split("\n") #Text direkt splitten
 
     teilnehmer = [""] * len(text)
     for i in range(0,len(text)):
-        teilnehmer[i] = text[i].replace('\n','')
+        teilnehmer[i] = text[i]
 
     return teilnehmer
 
 def TeilnehmerB():      # Größere Gruppe! 
-    datei = open('GruppeB.txt', 'r')
-    text = datei.readlines()
-    datei.close()
+    with open('GruppeB.txt', 'r') as datei:
+        text = datei.read().split("\n") #Text direkt splitten
 
     teilnehmer = [""] * len(text)
     for i in range(0,len(text)):
-        teilnehmer[i] = text[i].replace('\n','')    
+        teilnehmer[i] = text[i]  
     return teilnehmer
 
 def BekannteMatches():
-    datei = open('BekannteMatches.txt', 'r')
-    text = datei.readlines()
-    datei.close()
+    with open('BekannteMatches.txt', 'r') as datei:
+        text = datei.read().split("\n") #Text direkt splitten
 
     matches = [0] * len(text)
     for i in range(0,len(text)):
-        clearedText = text[i].split('%')[0].replace('\n','')
+        clearedText = text[i].split('%')[0]
         splittedText = clearedText.split(',')
         matches[i] = [int(splittedText[0]),int(splittedText[1])]
     return matches
 
 def BekannteNoMatches():
-    datei = open('BekannteNoMatches.txt', 'r')
-    text = datei.readlines()
-    datei.close()
+    with open('BekannteNoMatches.txt', 'r') as datei:
+        text = datei.read().split("\n") #Text direkt splitten
 
     nomatches = [0] * len(text)
     for i in range(0,len(text)):
-        clearedText = text[i].split('%')[0].replace('\n','')
+        clearedText = text[i].split('%')[0]
         splittedText = clearedText.split(',')
         nomatches[i] = [int(splittedText[0]),int(splittedText[1])]
     return nomatches
 
 def MatchingNights():           # Aus sicht von Gruppe A, wen sie aus Gruppe B gewählt haben!
-    datei = open('MatchingNights.txt', 'r')
-    text = datei.readlines()
-    datei.close()
+    with open('MatchingNights.txt', 'r') as datei:
+        text = datei.read().split("\n") #Text direkt splitten
 
     paare = [0] * len(text)
     paareStr = [""] * len(text)
     for i in range(0,len(text)):
-        clearedText = text[i].split('%')[0].replace('\n','')
+        clearedText = text[i].split('%')[0]
         paareStr[i] = clearedText.split('//')[0].split(',')
         paare[i] = [0]*len(paareStr[i])
         for k in range(0,len(paareStr[0])):
@@ -77,12 +72,10 @@ def MatchingNights():           # Aus sicht von Gruppe A, wen sie aus Gruppe B g
     return paare
 
 def CorrectMatches():           # Wie viele korrekte Matches gab es in der jeweiligen Nacht
-    datei = open('MatchingNights.txt', 'r')
-    text = datei.readlines()
-    datei.close()
+    with open('MatchingNights.txt', 'r') as datei:
+        text = datei.read().split("\n") #Text direkt splitten
 
     matches = [0] * len(text)
-
     for i in range(0,len(text)):
         clearedText = text[i].split('%')[0].replace('\n','')
         matches[i] = int(clearedText.split('//')[1])
@@ -96,35 +89,26 @@ def printProgress (iteration, total, decimals = 1):
         print()
 
 def CheckMatches(matchCombination, bekannteMatches, ignoreExtraPerson):
-    matchPossible = True
     # Für jedes Match wird überprüft, ob in der Kombination der Eintrag von Person-B ihr Match Person-A ist
     # Ist ein Match nicht enthalten => Kombination nicht möglich
-    for a in range(0,len(bekannteMatches)):
-        match_a = bekannteMatches[a][0]
-        match_b = bekannteMatches[a][1]
+    for [match_a,match_b] in bekannteMatches:
         if ignoreExtraPerson and match_b == 10: # Bei erstem 10x10 Test Infos bezüglich der Zusatzperson ignorieren
             continue
         elif matchCombination[match_b] != match_a:
-            matchPossible = False
-            return matchPossible
-    return matchPossible
+            return False
+    return True # Kein Ausschlusskriterium zutreffend => Kombination möglich
 
 def CheckNoMatches(matchCombination, bekannteNoMatches, ignoreExtraPerson):
-    matchPossible = True
     # Für jedes No-Match wird überprüft, ob in der Kombination der Eintrag von Person-B ein No-Match Person-A ist
     # Ist ein No-Match enthalten => Kombination nicht möglich
-    for a in range(0,len(bekannteNoMatches)):
-        match_a = bekannteNoMatches[a][0]
-        match_b = bekannteNoMatches[a][1]
+    for [match_a,match_b] in bekannteNoMatches:
         if ignoreExtraPerson and match_b == 10: # Bei erstem 10x10 Test Infos bezüglich der Zusatzperson ignorieren
             continue
         elif matchCombination[match_b] == match_a: 
-            matchPossible = False
-            return matchPossible
-    return matchPossible
+            return False
+    return True # Kein Ausschlusskriterium zutreffend => Kombination möglich
 
 def CheckMatchingNights(matchCombination, matchingNights, correctMatches):
-    matchPossible = True
     # Übereinstimmungen zwischen Kombination und Matchingnight zählen
     # Schauen, ob Übereinstimmungen = korrekte Matches in der Nacht
     # sonst ist Kombination nicht möglich
@@ -138,9 +122,9 @@ def CheckMatchingNights(matchCombination, matchingNights, correctMatches):
                 uebereinstimmungen += 1
 
         if uebereinstimmungen != correctMatches[night]:
-            matchPossible = False
-            return matchPossible
-    return matchPossible
+            return False
+    return True # Kein Ausschlusskriterium zutreffend => Kombination möglich
+
 
 # Programmstart
 starttime = time.time()
@@ -196,10 +180,12 @@ permutations_list = list(permutations_object)
 # Anschließend gekürzte Liste um Kombinationen für +1 Person erweitern und nochmal alle Bedingungen testen
 print('Check 10x10 (' + str(len(permutations_list)) + ' combinations) for Perfect Matches and NoMatches')
 permutations_list_10x10 = []
-for combination in permutations_list:
+l = len(permutations_list)
+for idx, combination in enumerate(permutations_list):
     if (CheckMatches(combination,bekannteMatches, True) and 
         CheckNoMatches(combination,bekannteNoMatches, True)):
         permutations_list_10x10.append(combination)
+    #printProgress(idx, l, 1) #printProgress wird jede Iteration aktualisiert => macht Berechnung VIEL langsamer
 
 endtime = time.time()
 print('Elapsed Time: {:5.3f}s'.format(endtime-starttime), end='  ')
@@ -211,13 +197,15 @@ print()
 print('Check 10x11 (' + str(10*len(permutations_list_10x10)) + ' combinations) for MatchingNights, Perfect Matches and NoMatches')
 extended_permutations_11x10 = []
 for b in range(0,lenA):
-    for i in range(0, len(permutations_list_10x10)):
+    l = len(permutations_list_10x10)
+    for i in range(0, l):
         matchCombination = permutations_list_10x10[i] + (b,)
         # Überprüfen ob Kombination möglich ist
         if (CheckMatchingNights(matchCombination, matchingNights, correctMatches) and
             CheckMatches(matchCombination, bekannteMatches, False) and 
             CheckNoMatches(matchCombination, bekannteNoMatches, False)):
             extended_permutations_11x10.append(matchCombination);
+        #printProgress(b*l+i, l*lenA, 1) #printProgress wird jede Iteration aktualisiert => macht Berechnung VIEL langsamer
 
 endtime = time.time()
 print('Elapsed Time: {:5.3f}s'.format(endtime-starttime), end='  ')
