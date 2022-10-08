@@ -128,14 +128,10 @@ def CheckMatchingNights(matchCombination, matchingNights, correctMatches):
 
 def ClickBtn(allCombinations, button_frame, manualMatches, label_count, index):
     # Knopf gedrückt, Zeile = Person aus Gruppe B, Spalte = Person aus Gruppe A
-    print("Button", str(index[0]), ',', str(index[1]), "clicked")
-
     if index in manualMatches:
         manualMatches.remove(index)
-        print("Index entfernt")
     else:
         manualMatches.append(index)
-        print("Index hinzugefügt")
 
     # reducedCombination = Liste mit Berücksichtigung der manuellen Matches
     reducedCombinations = []
@@ -147,8 +143,7 @@ def ClickBtn(allCombinations, button_frame, manualMatches, label_count, index):
         if isCombinationValid: # nur die Kombinationen hinzufügen, die alle manuellen Matches enthalten
             reducedCombinations.append(combination)
 
-    print( 'Nach Festlegung Match noch '+str(len(reducedCombinations)) + ' mögliche Kombinationen')
-    label_count.config( text = 'Noch ' + str(len(reducedCombinations)) + ' Kombinationen')
+    label_count.config( text = 'Nacht ' + str(len(matchingNights)) + ', noch ' + str(len(reducedCombinations)) + ' Kombinationen')
 
     # Matchmatrix neu berechnen basierend aus Ausgewähltem Match
     newMatchMatrix = [[0 for _ in range(10)] for _ in range(11)] # leere 11x10 Matrix
@@ -401,7 +396,7 @@ else:
     label_count = tk.Label( label_frame_count,
                                          bg="lightgrey",
                                          fg="black",
-                                         text='Noch ' + str(len(possibleMatchcombinations)) + ' Kombinationen',
+                                         text = 'Nacht ' + str(len(matchingNights)) + ', noch ' + str(len(possibleMatchcombinations)) + ' Kombinationen',
                                          font=("Arial",12))
     label_count.place(relx=0.5, rely=0.5, anchor='center')
 
