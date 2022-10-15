@@ -1,0 +1,68 @@
+Hier sind die Daten der bisherigen Folgen enthalten
+- Teilnehmer und Teilnehmerinnen
+- 7 Match-Boxen
+- 7 MatchingNights
+
+
+=> Gruppe A:
+0: Anna Iffländer
+1: Cecilia Asoro
+2: Celina Pop
+3: Franziska Temme
+4: Gina Kapala
+5: Isabelle Brauneis
+6: Karina Bauer
+7: Luisa Krappmann
+8: Ricarda Raatz
+9: Zoe Saip
+
+
+=> Gruppe B:
+0: Amadu Effendi Coulibaly
+1: Calvin Kleinen
+2: Fabio De Pasquale
+3: Luca Wetzel
+4: Lukas Berghof
+5: Martin Fuhsy
+6: Maurice Dziwak
+7: Max Schnabel
+8: Michael Schüler
+9: Pharrell Harrell
+10: Felix Kaufels*
+
+
+=> BekannteMatches:
+07, 04	% Folge 09 Ausstieg Lukas (+Luisa)
+01, 00	% Box 7: Cecilia Amadu
+
+
+=> BekannteNoMatches:
+09, 05 	% Box 1: Zoe Martin
+06, 09	% Box 2: Karina Pharell
+02, 04	% Box 3: Celina Lukas
+07, 10	% Folge 9: Auszug Luisa, kein Match mit +1 Felix
+08, 10	% Box 5: Ricarda Felix*
+05, 09	% Box 6: Isabelle Pharrell
+01, 10	% Box 7: Cecilia Felix, nach Match mit Amadu
+
+
+=> Verkaufte Matchboxen:
+05, 00	% Box 4: Isabelle Amadu
+
+
+=> MatchingNights:
+1: Anna-Michael, Cecilia-Amadu, Celina-Martin, Franziska-Max, Gina-Calvin, Isabelle-Lukas, Karina-Pharrell, Luisa-Fabio, Ricarda-Maurice, Zoe-Luca
+2: Anna-Michael, Cecilia-Pharrell, Celina-Max, Franziska-Luca, Gina-Amadu, Isabelle-Martin, Karina-Fabio, Luisa-Calvin, Ricarda-Maurice, Zoe-Lukas
+3: Anna-Martin, Cecilia-Amadu, Celina-Fabio, Franziska-Lukas, Gina-Michael, Isabelle-Luca, Karina-Calvin, Luisa-Pharrell, Ricarda-Maurice, Zoe-Max
+4: Matching-Night wegen Ausstieg Lukas entfallen
+5: Anna-Pharrell, Cecilia-Amadu, Celina-Fabio, Franziska-Michael, Gina-Felix*, Isabelle-Maurice, Karina-Martin, Luisa-Lukas, Ricarda-Max, Zoe-Luca
+6: Anna-Michael, Cecilia-Maurice, Celina-Fabio, Franziska-Max, Gina-Felix*, Isabelle-Martin, Karina-Calvin, Luisa-Lukas, Ricarda-Pharrell, Zoe-Luca
+7: Anna-Michael, Cecilia-Amadu, Celina-Fabio, Franziska-Max, Gina-Felix*, Isabelle-Martin, Karina-Calvin, Luisa-Lukas, Ricarda-Pharrell, Zoe-Luca
+
+08, 00, 05, 07, 01, 04, 09, 02, 06, 03 // 03	% Nacht 1
+08, 09, 07, 03, 00, 05, 02, 01, 06, 04 // 02	% Nacht 2
+05, 00, 02, 04, 08, 03, 01, 09, 06, 07 // 03	% Nacht 3
+05, 00, 02, 04, 08, 03, 01, 09, 06, 07 // 03	% Nacht 4 wegen Ausstieg entfallen, für Skript identisch zu Nacht 3
+09, 00, 02, 08, 10, 06, 05, 04, 07, 03 // 03	% Nacht 5
+08, 06, 02, 07, 10, 05, 01, 04, 09, 03 // 03	% Nacht 6
+08, 00, 02, 07, 10, 05, 01, 04, 09, 03 // 04	% Nacht 7

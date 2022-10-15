@@ -5,8 +5,6 @@ import time
 import itertools
 import tkinter as tk
 from tkinter import ttk
-import pandas
-import warnings
 
 def Header():
     print()
@@ -18,46 +16,71 @@ def Header():
     print('\nLösungsskript')
     print('Made by Alex/Pheagan \n')
 
-def ImportExcelData(fileName):
-    candidatesXL = pandas.read_excel(fileName, sheet_name="TeilnehmerInnen")
-    matchBoxesXl = pandas.read_excel(fileName, sheet_name="Matchboxen")
-    matchingNightsXL = pandas.read_excel(fileName, sheet_name="MatchingNights")
+def TeilnehmerA():      # Kleinere Gruppe!
+    with open('GruppeA.txt', 'r') as datei:
+        text = datei.read().split("\n") #Text direkt splitten
 
-    # Evaluate Candidates
-    groupA = []
-    for i in range(0,10):
-        groupA.append( candidatesXL.values[i+1, 2] )
-    groupB = []
-    for i in range(0,11):
-        groupB.append( candidatesXL.values[i+1, 5] )
+    teilnehmer = [""] * len(text)
+    for i in range(0,len(text)):
+        teilnehmer[i] = text[i]
 
-    # Evaluate Matchboxes
-    YesMatches = []
-    NoMatches = []
-    for i in range(0,20):
-        matchResult = matchBoxesXl.values[2+i, 4]
-        if matchResult == 'ja':
-            yesMatch = [ matchBoxesXl.values[2+i, 2], matchBoxesXl.values[2+i, 3] ]
-            YesMatches.append( [ groupA.index(yesMatch[0]), groupB.index(yesMatch[1]) ] )
-        elif matchResult == 'nein':
-            noMatch = [ matchBoxesXl.values[2+i, 2], matchBoxesXl.values[2+i, 3] ]
-            NoMatches.append( [ groupA.index(noMatch[0]), groupB.index(noMatch[1]) ] )
+    return teilnehmer
 
-    matchingNights = []
-    correctMatches = []
-    # Evaluate MatchingNights
-    for i in range(0,10):
-        matchValueTmp = matchingNightsXL.values[ 5*i+4 ,14]
-        if math.isnan(matchValueTmp):
-            continue
-        correctMatches.append(matchValueTmp)
-        combination = []
-        for k in range(0,10):
-            partner = matchingNightsXL.values[ 5*i+4 ,3+k]
-            combination.append( groupB.index(partner) )
-        matchingNights.append(combination)
+def TeilnehmerB():      # Größere Gruppe! 
+    with open('GruppeB.txt', 'r') as datei:
+        text = datei.read().split("\n") #Text direkt splitten
 
-    return [groupA, groupB, YesMatches, NoMatches, matchingNights, correctMatches]
+    teilnehmer = [""] * len(text)
+    for i in range(0,len(text)):
+        teilnehmer[i] = text[i]  
+    return teilnehmer
+
+def BekannteMatches():
+    with open('BekannteMatches.txt', 'r') as datei:
+        text = datei.read().split("\n") #Text direkt splitten
+
+    matches = [0] * len(text)
+    for i in range(0,len(text)):
+        clearedText = text[i].split('%')[0]
+        splittedText = clearedText.split(',')
+        matches[i] = [int(splittedText[0]),int(splittedText[1])]
+    return matches
+
+def BekannteNoMatches():
+    with open('BekannteNoMatches.txt', 'r') as datei:
+        text = datei.read().split("\n") #Text direkt splitten
+
+    nomatches = [0] * len(text)
+    for i in range(0,len(text)):
+        clearedText = text[i].split('%')[0]
+        splittedText = clearedText.split(',')
+        nomatches[i] = [int(splittedText[0]),int(splittedText[1])]
+    return nomatches
+
+def MatchingNights():           # Aus sicht von Gruppe A, wen sie aus Gruppe B gewählt haben!
+    with open('MatchingNights.txt', 'r') as datei:
+        text = datei.read().split("\n") #Text direkt splitten
+
+    paare = [0] * len(text)
+    paareStr = [""] * len(text)
+    for i in range(0,len(text)):
+        clearedText = text[i].split('%')[0]
+        paareStr[i] = clearedText.split('//')[0].split(',')
+        paare[i] = [0]*len(paareStr[i])
+        for k in range(0,len(paareStr[0])):
+            paare[i][k] = int(paareStr[i][k])
+
+    return paare
+
+def CorrectMatches():           # Wie viele korrekte Matches gab es in der jeweiligen Nacht
+    with open('MatchingNights.txt', 'r') as datei:
+        text = datei.read().split("\n") #Text direkt splitten
+
+    matches = [0] * len(text)
+    for i in range(0,len(text)):
+        clearedText = text[i].split('%')[0].replace('\n','')
+        matches[i] = int(clearedText.split('//')[1])
+    return matches
 
 def printProgress (iteration, total, decimals = 1):
     percent =("{0:." + str(decimals) + "f}").format(100 * (iteration / total))
@@ -168,29 +191,35 @@ def UpdateMatrix(matchMatrix, button_frame, manualMatches):
 starttime = time.time()
 Header()
 
-# The Excel file contains Data Validations for only allowing Names of the participant for Macht-Boxes or -nights
-# These can not be processed by openpyxl (which is not needed here), so the warning will be ignored to not show up in the console
-warnings.filterwarnings('ignore', category=UserWarning, module='openpyxl')
-excelData = ImportExcelData("AYTO_Data.xlsx")
-
-gruppeA = excelData[0]
-gruppeB = excelData[1]
-bekannteMatches = excelData[2]
-bekannteNoMatches = excelData[3]
-matchingNights = excelData[4]
-correctMatches = excelData[5]
+gruppeA = TeilnehmerA()
+gruppeB = TeilnehmerB()
 
 lenA = len(gruppeA)
 lenB = len(gruppeB)
 n_combination = math.factorial(10)*10
 
-print('Teilnehmer:')
+# Es findet (fast) keine Überprüfung statt, dass Daten richtig eingetragen sind
+# - alle Textdateien müssen vorliegen
+# - Daten in den Textdateien müssen korrekt eingetragen sein
+if lenA!=10 or lenB!=11:
+    print('Länge der Teilnehmerlisten ist nicht korrekt')
+    print('Gruppe A muss 10 Einträge enthalten und Gruppe B 11')
+    input('\nDas Skript wird jetzt beendet. Press Enter to continue...')
+    sys.exit(0)
+
+
+print('Teilnehmer eingelesen')
 print('Gruppe A: ' + str(gruppeA))
 print('Gruppe B: '+ str(gruppeB))
 print('Insgesammt mögliche Kombinationen: ' + str(n_combination))
 print()
 
-print('Weitere Daten:')
+bekannteMatches = BekannteMatches()
+bekannteNoMatches = BekannteNoMatches()
+matchingNights = MatchingNights()
+correctMatches = CorrectMatches();
+
+print('Weitere Daten eingelesen:')
 print('Bekannte Matches: ' + str(len(bekannteMatches)))
 print('Bekannte No-Matches: ' + str(len(bekannteNoMatches)))
 print('Matching-Nights: ' + str(len(matchingNights)))
@@ -239,8 +268,13 @@ for b in range(0,lenA):
             possibleMatchcombinations.append(matchCombination);
         #printProgress(b*l+i, l*lenA, 1) #printProgress wird jede Iteration aktualisiert => macht Berechnung VIEL langsamer
 
+endtime = time.time()
+print('Elapsed Time: {:5.3f}s'.format(endtime-starttime), end='  ')
+print()
+
 
 # Alle Kombinationen in eine Tabelle zusammenfassen
+print( '\nRelative Tabelle berechnen')
 matchMatrix = [[0 for _ in range(lenA)] for _ in range(lenB)] # leere 11x10 Matrix
 for combination in possibleMatchcombinations:
     for i in range (0, len(combination)):
@@ -255,11 +289,9 @@ for row in range(0,len(matchMatrix)):
         matchMatrix[row][col] = round(matchMatrix[row][col]*100/combinations_left,1)
 endtime = time.time()
 print('Elapsed Time: {:5.3f}s'.format(endtime-starttime), end='  ')
-print('\nNoch mögliche Kombinationen: ' + str(combinations_left))
 print()
 
-print('\n__________________________________________________________')
-print("Print interactive Table?")
+print("\n\nPrint interactive Table?")
 userInput = input( "Press y/Y for interactive Table, else only static Table: ")
 if userInput == 'y' or userInput == 'Y':
     printOnlyTable = False

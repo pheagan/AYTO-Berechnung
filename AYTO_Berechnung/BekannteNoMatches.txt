@@ -1,0 +1,7 @@
+09, 05 	% Box 1: Zoe Martin
+06, 09	% Box 2: Karina Pharell
+02, 04	% Box 3: Celina Lukas
+07, 10	% Folge 9: Auszug Luisa, kein Match mit +1 Felix
+08, 10	% Box 5: Ricarda Felix*
+05, 09	% Box 6: Isabelle Pharrell
+01, 10	% Box 7: Cecilia Felix, nach Match mit Amadu
