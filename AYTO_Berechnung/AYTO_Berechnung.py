@@ -31,14 +31,32 @@ def ImportExcelData(fileName):
     for i in range(0,11):
         groupB.append( candidatesXL.values[i+1, 5] )
 
+    if candidatesXL.values[13,4] == "ja":
+        bonusPersonKnown = True
+    else:
+        bonusPersonKnown = False
+
     # Evaluate Matchboxes
     YesMatches = []
     NoMatches = []
     for i in range(0,20):
         matchResult = matchBoxesXl.values[2+i, 4]
         if matchResult == 'ja':
-            yesMatch = [ matchBoxesXl.values[2+i, 2], matchBoxesXl.values[2+i, 3] ]
-            YesMatches.append( [ groupA.index(yesMatch[0]), groupB.index(yesMatch[1]) ] )
+            matchA = matchBoxesXl.values[2+i, 2] # Name
+            matchB = matchBoxesXl.values[2+i, 3] # Name
+            matchA_ID = groupA.index(matchA) # ID
+            matchB_ID = groupB.index(matchB) # ID
+            yesMatchIDs = [ matchA_ID, matchB_ID ] # ID von PersonA/PersonB
+            YesMatches.append( yesMatchIDs )
+
+            # Überprüfen ob einzigartiges Match
+            # Wenn ja, dann hat PersonA automatisch alle anderen PersonenB als NoMatch
+            uniqueMatch = matchBoxesXl.values[2+i, 6];
+            if uniqueMatch == 'ja':
+                for b in range(0, len(groupB) ):
+                    if b != matchB_ID:
+                        NoMatches.append([ matchA_ID, b ])
+
         elif matchResult == 'nein':
             noMatch = [ matchBoxesXl.values[2+i, 2], matchBoxesXl.values[2+i, 3] ]
             NoMatches.append( [ groupA.index(noMatch[0]), groupB.index(noMatch[1]) ] )
@@ -57,13 +75,13 @@ def ImportExcelData(fileName):
             combination.append( groupB.index(partner) )
         matchingNights.append(combination)
 
-    return [groupA, groupB, YesMatches, NoMatches, matchingNights, correctMatches]
+    return [groupA, groupB, YesMatches, NoMatches, matchingNights, correctMatches, bonusPersonKnown]
 
 def printProgress (iteration, total, decimals = 1):
     percent =("{0:." + str(decimals) + "f}").format(100 * (iteration / total))
     printEnd = "\r"
     print(f'\rFortschritt: {percent}%', end = printEnd)
-    if iteration == n_combination: 
+    if iteration == total: 
         print()
 
 def CheckMatches(matchCombination, bekannteMatches, ignoreExtraPerson):
@@ -179,10 +197,13 @@ bekannteMatches = excelData[2]
 bekannteNoMatches = excelData[3]
 matchingNights = excelData[4]
 correctMatches = excelData[5]
+extraPerson_isKnown = excelData[6]
 
 lenA = len(gruppeA)
 lenB = len(gruppeB)
-n_combination = math.factorial(10)*10
+n_combination = math.factorial( lenA )* lenA
+if not extraPerson_isKnown:
+    n_combination = n_combination*lenB # eigentlich lenB/2 da durch doppelte Person zwei Kombinationen identisch sind, ich prüfe aber aktuell noch alle
 
 print('Teilnehmer:')
 print('Gruppe A: ' + str(gruppeA))
@@ -203,41 +224,57 @@ print()
 listA = []
 for b in range(0,lenA): 
     listA.append(b);
-permutations_object = itertools.permutations(listA)                                        
-permutations_list = list(permutations_object)
+permutations_list_10x10 = list( itertools.permutations(listA) )
+
+possibleBonusIDs = []
+if extraPerson_isKnown:
+    possibleBonusIDs.append( lenB-1 ) # letzter Eintrag in Gruppe B ist BonusPerson
+else:
+    for b in range(0,lenB): 
+        possibleBonusIDs.append(b); # Jeder Eintrag in Gruppe B kann BonusPerson sein
 
 
-# VORGEHEN
-# An 10x10 Matrix direkt Matches und NoMatches 10 testen, da kleinere Gruppe 
-# Anschließend gekürzte Liste um Kombinationen für +1 Person erweitern und nochmal alle Bedingungen testen
-print('Check 10x10 (' + str(len(permutations_list)) + ' combinations) for Perfect Matches and NoMatches')
-permutations_list_10x10 = []
-l = len(permutations_list)
-for idx, combination in enumerate(permutations_list):
-    if (CheckMatches(combination,bekannteMatches, True) and 
-        CheckNoMatches(combination,bekannteNoMatches, True)):
-        permutations_list_10x10.append(combination)
-    #printProgress(idx, l, 1) #printProgress wird jede Iteration aktualisiert => macht Berechnung VIEL langsamer
+# ------------------------------------------
+# || Zeitoptimierung an 10x10 Permutation ||
+# ------------------------------------------
+if extraPerson_isKnown:
+    # An 10x10 Matrix direkt Matches und NoMatches 10 testen, da kleinere Gruppe 
+    # Anschließend gekürzte Liste um Kombinationen für +1 Person erweitern und nochmal alle Bedingungen testen
+    # Geht nur wenn bekannt ist, dass Person 11 aus Gruppe B die Bonusperson ist
+    print('Check 10x10 (' + str(len(permutations_list_10x10)) + ' combinations) for Perfect Matches and NoMatches')
+    permutations_list_reduced = []
+    for idx, combination in enumerate(permutations_list_10x10):
+        if (CheckMatches(combination,bekannteMatches, True) and 
+            CheckNoMatches(combination,bekannteNoMatches, True)):
+            permutations_list_reduced.append(combination)
+        #printProgress(idx, len(permutations_list_10x10), 1) #printProgress wird jede Iteration aktualisiert => macht Berechnung VIEL langsamer
 
-endtime = time.time()
-print('Elapsed Time: {:5.3f}s'.format(endtime-starttime), end='  ')
-print('\nNoch mögliche Kombinationen: ' + str(len(permutations_list_10x10)))
-print()
+    permutations_list_10x10 = permutations_list_reduced
+    endtime = time.time()
+    print('Elapsed Time: {:5.3f}s'.format(endtime-starttime), end='  ')
+    print('\nNoch mögliche Kombinationen: ' + str(len(permutations_list_10x10)))
+    print()
 
 
-# 10x11 erstellen und alle Bedingungen testen
-print('Check 10x11 (' + str(10*len(permutations_list_10x10)) + ' combinations) for MatchingNights, Perfect Matches and NoMatches')
+# -------------------------------------------------
+# || 10x11 erstellen und alle Bedingungen testen ||
+# -------------------------------------------------
+counterBonusPerson = [0 for _ in range(lenB)]
 possibleMatchcombinations = []
-for b in range(0,lenA):
-    l = len(permutations_list_10x10)
-    for i in range(0, l):
-        matchCombination = permutations_list_10x10[i] + (b,)
-        # Überprüfen ob Kombination möglich ist
-        if (CheckMatchingNights(matchCombination, matchingNights, correctMatches) and
-            CheckMatches(matchCombination, bekannteMatches, False) and 
-            CheckNoMatches(matchCombination, bekannteNoMatches, False)):
-            possibleMatchcombinations.append(matchCombination);
-        #printProgress(b*l+i, l*lenA, 1) #printProgress wird jede Iteration aktualisiert => macht Berechnung VIEL langsamer
+print('Check all combinations for MatchingNights, Perfect Matches and NoMatches')
+for iBonusPerson in possibleBonusIDs: # Zusatzperson in Liste B durchgehen
+    for iBonusMatch in range(0, lenA): # Match der Zusatzperson in Liste A durchgehen      
+        for combination in permutations_list_10x10: # Alle Kombinationen durchgehen
+            matchCombination = list(combination)
+            matchCombination.insert(iBonusPerson, iBonusMatch)
+            if (CheckMatchingNights(matchCombination, matchingNights, correctMatches) and
+                CheckMatches(matchCombination, bekannteMatches, False) and 
+                CheckNoMatches(matchCombination, bekannteNoMatches, False)):
+                possibleMatchcombinations.append(matchCombination)
+                counterBonusPerson[iBonusPerson] = counterBonusPerson[iBonusPerson] + 1
+        # Fortschritt über äußere 2 Schleifen laufen lassen (in innerer Schleife jede Iteration viel zu Langsam, so nur 110 Aktualisierungen)
+        progress = iBonusPerson*lenA + iBonusMatch + 1
+        printProgress(progress, lenB*lenA, 1)
 
 
 # Alle Kombinationen in eine Tabelle zusammenfassen
@@ -253,10 +290,27 @@ if combinations_left == 0:
 for row in range(0,len(matchMatrix)):
     for col in range(0,len(matchMatrix[0])):
         matchMatrix[row][col] = round(matchMatrix[row][col]*100/combinations_left,1)
+
+# Berechnung und Text für Bonusperson:
+textBonusPerson = ""
+for i in range (0, lenB):
+    if (counterBonusPerson[i] != 0):
+        percent =("{0:." + str(1) + "f}").format(100 * (counterBonusPerson[i] / combinations_left))
+        textBonusPerson = textBonusPerson + gruppeB[i] + ": " + str(percent) + "%, "
+
+
 endtime = time.time()
 print('Elapsed Time: {:5.3f}s'.format(endtime-starttime), end='  ')
 print('\nNoch mögliche Kombinationen: ' + str(combinations_left))
 print()
+
+if not extraPerson_isKnown:
+    print("Bonusperson: ")
+    if (textBonusPerson == ""):
+        print("Anhand der Daten keine Bonuspersön möglich")
+    else:
+        print(textBonusPerson) 
+    print() # Zusatztext ausgeben
 
 print('\n__________________________________________________________')
 print("Print interactive Table?")
@@ -297,7 +351,13 @@ if printOnlyTable:
     the_table.set_fontsize(14)
     the_table.scale(1, 2)
     plt.title("Matchingnight " + str(len(matchingNights)), fontsize=18)
-    plt.xlabel("Noch " + str(len(possibleMatchcombinations)) + " mögliche Kombinationen", fontsize=12)
+    
+    if extraPerson_isKnown:
+        label = "Noch " + str(len(possibleMatchcombinations)) + " mögliche Kombinationen"
+    else:
+        label = "Noch " + str(int( len(possibleMatchcombinations)/2 )) + " mögliche Kombinationen"
+        label = label + "\nBonusperson: " + textBonusPerson
+    plt.xlabel(label, fontsize=12)
 
     # Removing ticks and spines enables you to get the figure only with table
     plt.tick_params(axis='x', which='both', bottom=False, top=False, labelbottom=False)
@@ -357,6 +417,12 @@ else:
         label_names_A[column].place(relx=0.5, rely=0.5, anchor='center')
 
     # Label für Kombinationen
+    if extraPerson_isKnown:
+        labelCount = len(possibleMatchcombinations)
+    else:
+        labelCount = int( len(possibleMatchcombinations)/2 )
+
+
     label_frame_count = tk.Frame(fenster,width=1090,height=40 )
     label_frame_count.config(bg="lightgrey")
     label_frame_count.pack_propagate(0)
@@ -364,7 +430,7 @@ else:
     label_count = tk.Label( label_frame_count,
                                          bg="lightgrey",
                                          fg="black",
-                                         text = 'Nacht ' + str(len(matchingNights)) + ', noch ' + str(len(possibleMatchcombinations)) + ' Kombinationen',
+                                         text = 'Nacht ' + str(len(matchingNights)) + ', noch ' + str(labelCount) + ' Kombinationen',
                                          font=("Arial",12))
     label_count.place(relx=0.5, rely=0.5, anchor='center')
 
