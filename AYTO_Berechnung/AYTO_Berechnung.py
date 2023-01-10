@@ -138,7 +138,12 @@ def ClickBtn(allCombinations, button_frame, manualMatches, label_count, index):
         if isCombinationValid: # nur die Kombinationen hinzufügen, die alle manuellen Matches enthalten
             reducedCombinations.append(combination)
 
-    label_count.config( text = 'Nacht ' + str(len(matchingNights)) + ', noch ' + str(len(reducedCombinations)) + ' Kombinationen')
+    # Labelcount für Kombinationen
+    if extraPerson_isKnown:
+        labelCount = len(reducedCombinations)
+    else:
+        labelCount = int( len(reducedCombinations)/2 )
+    label_count.config( text = 'Nacht ' + str(len(matchingNights)) + ', noch ' + str(labelCount) + ' Kombinationen')
 
     # Matchmatrix neu berechnen basierend aus Ausgewähltem Match
     newMatchMatrix = [[0 for _ in range(10)] for _ in range(11)] # leere 11x10 Matrix
@@ -274,7 +279,7 @@ for iBonusPerson in possibleBonusIDs: # Zusatzperson in Liste B durchgehen
                 counterBonusPerson[iBonusPerson] = counterBonusPerson[iBonusPerson] + 1
         # Fortschritt über äußere 2 Schleifen laufen lassen (in innerer Schleife jede Iteration viel zu Langsam, so nur 110 Aktualisierungen)
         progress = iBonusPerson*lenA + iBonusMatch + 1
-        printProgress(progress, lenB*lenA, 1)
+        printProgress(int(progress), int(lenB*lenA), 1)
 
 
 # Alle Kombinationen in eine Tabelle zusammenfassen
@@ -290,6 +295,9 @@ if combinations_left == 0:
 for row in range(0,len(matchMatrix)):
     for col in range(0,len(matchMatrix[0])):
         matchMatrix[row][col] = round(matchMatrix[row][col]*100/combinations_left,1)
+
+if not extraPerson_isKnown:
+    combinations_left = int(combinations_left/2)
 
 # Berechnung und Text für Bonusperson:
 textBonusPerson = ""
@@ -313,12 +321,15 @@ if not extraPerson_isKnown:
     print() # Zusatztext ausgeben
 
 print('\n__________________________________________________________')
-print("Print interactive Table?")
-userInput = input( "Press y/Y for interactive Table, else only static Table: ")
-if userInput == 'y' or userInput == 'Y':
-    printOnlyTable = False
-else:
-    printOnlyTable = True
+
+#print("Print interactive Table?")
+#userInput = input( "Press y/Y for interactive Table, else only static Table: ")
+#if userInput == 'y' or userInput == 'Y':
+#    printOnlyTable = False
+#else:
+#    printOnlyTable = True
+
+printOnlyTable = True
 
 if printOnlyTable:
     # PLOTTEN der relativen Tabelle
@@ -352,11 +363,9 @@ if printOnlyTable:
     the_table.scale(1, 2)
     plt.title("Matchingnight " + str(len(matchingNights)), fontsize=18)
     
-    if extraPerson_isKnown:
-        label = "Noch " + str(len(possibleMatchcombinations)) + " mögliche Kombinationen"
-    else:
-        label = "Noch " + str(int( len(possibleMatchcombinations)/2 )) + " mögliche Kombinationen"
-        label = label + "\nBonusperson: " + textBonusPerson
+    label = "Noch " + str(combinations_left) + " mögliche Kombinationen"
+    if not extraPerson_isKnown:
+        label = label + "\nDoppelt: " + textBonusPerson
     plt.xlabel(label, fontsize=12)
 
     # Removing ticks and spines enables you to get the figure only with table
@@ -366,7 +375,7 @@ if printOnlyTable:
         plt.gca().spines[pos].set_visible(False)
 
     plt.show()
-else:
+#else:
     # Interaktive Tabelle erstellen
     manualMatches = [] # Liste mit x/y Koordinaten von Matches, die manuell gesetzt werden (können)
 
@@ -416,7 +425,7 @@ else:
                                          font=("Arial",12))
         label_names_A[column].place(relx=0.5, rely=0.5, anchor='center')
 
-    # Label für Kombinationen
+    # Labelcount für Kombinationen
     if extraPerson_isKnown:
         labelCount = len(possibleMatchcombinations)
     else:
