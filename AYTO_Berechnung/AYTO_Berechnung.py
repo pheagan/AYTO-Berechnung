@@ -105,6 +105,12 @@ def CheckNoMatches(matchCombination, bekannteNoMatches, ignoreExtraPerson):
     return True # Kein Ausschlusskriterium zutreffend => Kombination möglich
 
 def CheckMatchingNights(matchCombination, matchingNights, correctMatches):
+    # TODO: SAUBER IMPLEMENTIEREN
+    # Max und Peter haben das selbe Match => Überprüfen
+    # Max = Gruppe_b[10] Peter = Gruppe_b[8]
+    if matchCombination[10] != matchCombination[8]:
+        return False
+
     # Übereinstimmungen zwischen Kombination und Matchingnight zählen
     # Schauen, ob Übereinstimmungen = korrekte Matches in der Nacht
     # sonst ist Kombination nicht möglich
