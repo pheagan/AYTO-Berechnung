@@ -61,6 +61,16 @@ def ImportExcelData(fileName):
             noMatch = [ matchBoxesXl.values[2+i, 2], matchBoxesXl.values[2+i, 3] ]
             NoMatches.append( [ groupA.index(noMatch[0]), groupB.index(noMatch[1]) ] )
 
+    doubleMatchNames = [ matchBoxesXl.values[24,2], matchBoxesXl.values[24,3] ]
+    # Evaluate double Match if known  
+    if not pandas.isna(doubleMatchNames[0]) and not pandas.isna(doubleMatchNames[1]) and doubleMatchNames[0] != doubleMatchNames[1]:        
+        doubleMatch = [groupB.index(doubleMatchNames[0]), groupB.index(doubleMatchNames[1])]
+        # print("Doublematch bekannt: " + str(doubleMatchNames) )
+    else:
+        doubleMatch = [0, 0]
+
+
+
     matchingNights = []
     correctMatches = []
     # Evaluate MatchingNights
@@ -75,7 +85,7 @@ def ImportExcelData(fileName):
             combination.append( groupB.index(partner) )
         matchingNights.append(combination)
 
-    return [groupA, groupB, YesMatches, NoMatches, matchingNights, correctMatches, bonusPersonKnown]
+    return [groupA, groupB, YesMatches, NoMatches, matchingNights, correctMatches, bonusPersonKnown, doubleMatch]
 
 def printProgress (iteration, total, decimals = 1):
     percent =("{0:." + str(decimals) + "f}").format(100 * (iteration / total))
@@ -104,12 +114,11 @@ def CheckNoMatches(matchCombination, bekannteNoMatches, ignoreExtraPerson):
             return False
     return True # Kein Ausschlusskriterium zutreffend => Kombination möglich
 
-def CheckMatchingNights(matchCombination, matchingNights, correctMatches):
-    # TODO: SAUBER IMPLEMENTIEREN
-    # Max und Peter haben das selbe Match => Überprüfen
-    # Max = Gruppe_b[10] Peter = Gruppe_b[8]
-    if matchCombination[10] != matchCombination[8]:
-        return False
+def CheckMatchingNights(matchCombination, matchingNights, correctMatches, doubleMatch):
+    # Wenn Doppel-Match bekannt: überprüfen ob die in Matchkombination den/die gleiche PartnerIn haben
+    if doubleMatch[0]!=doubleMatch[1]:
+        if matchCombination[doubleMatch[0]] != matchCombination[doubleMatch[1]]:
+            return False
 
     # Übereinstimmungen zwischen Kombination und Matchingnight zählen
     # Schauen, ob Übereinstimmungen = korrekte Matches in der Nacht
@@ -209,6 +218,7 @@ bekannteNoMatches = excelData[3]
 matchingNights = excelData[4]
 correctMatches = excelData[5]
 extraPerson_isKnown = excelData[6]
+doubleMatch = excelData [7]
 
 lenA = len(gruppeA)
 lenB = len(gruppeB)
@@ -227,6 +237,8 @@ print('Bekannte Matches: ' + str(len(bekannteMatches)))
 print('Bekannte No-Matches: ' + str(len(bekannteNoMatches)))
 print('Matching-Nights: ' + str(len(matchingNights)))
 print('Nacht-Ergebnisse: ' + str(len(correctMatches)))
+if doubleMatch[0]!=doubleMatch[1]:
+    print("Double-Match bekannt: " + str(gruppeB[doubleMatch[0]]) + "&" + str(gruppeB[doubleMatch[1]]) )
 print()
 
 
@@ -278,7 +290,7 @@ for iBonusPerson in possibleBonusIDs: # Zusatzperson in Liste B durchgehen
         for combination in permutations_list_10x10: # Alle Kombinationen durchgehen
             matchCombination = list(combination)
             matchCombination.insert(iBonusPerson, iBonusMatch)
-            if (CheckMatchingNights(matchCombination, matchingNights, correctMatches) and
+            if (CheckMatchingNights(matchCombination, matchingNights, correctMatches, doubleMatch) and
                 CheckMatches(matchCombination, bekannteMatches, False) and 
                 CheckNoMatches(matchCombination, bekannteNoMatches, False)):
                 possibleMatchcombinations.append(matchCombination)
