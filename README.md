@@ -12,7 +12,8 @@ Download der aktuellen Release Version: [Release V1.0](https://github.com/pheaga
 \
 Skript erstellt mit Python Version 3.7.\
 Es werden die Module _**matplotlib**_, _**sys**_, _**math**_, _**time**_, _**itertools**_, _**tkinter**_, _**pandas**_, _**warnings**_ und _**openpyxl**_ verwendet. 
-Die meisten davon müssten in der Standard-Installation von Python enthalten sein, insbesondere matplotlib, pandas und openpyxl gegebenenfalls nachinstallieren.
+Die meisten davon sind in der Standard-Installation von Python enthalten. Die Abhängigkeiten matplotlib, pandas und openpyxl müssen über pip nachinstalliet werden. Dazu kann die requirementsdatei verwendet werden.
+Tkinter ist unter Windows in Python standardmäßig mit dabei. Unter Linux muss tk seperat (nicht über pip möglich) bezogen werden (Arch: `sudo pacman -S tk`, Ubuntu/Debian: `sudo apt install python3-tk`, Mac: `brew install python-tk`).
 \
 \
 Neben der Skriptdatei muss zusätzlich die Excel Datei "AYTO_Data.xlsx" im gleichen Ordner liegen. 
